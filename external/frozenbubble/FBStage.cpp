@@ -15,22 +15,25 @@ bool FBStage::OnInit()
 	myHurryPanel = FBResource::Inst().CreateHurryPanel();Add(myHurryPanel);	
 	myWinPanel = FBResource::Inst().CreateWinPanel();Add(myWinPanel);
 	myLosePanel = FBResource::Inst().CreateLosePanel();Add(myLosePanel);
-	myTransparentBackground = FBResource::Inst().CreateTransparentBackground();Add(myTransparentBackground);
+	myTransparentBackground = FBResource::Inst().CreateTransparentBackground4MainMenu();Add(myTransparentBackground);
 	myTransparentBackground->SetVisible(false);
 
 	currentLevel = GlobalSetting::Inst().LevelNum;
 	musicOn = GlobalSetting::Inst().MusicOn;
 	soundOn = GlobalSetting::Inst().SoundOn;
 	myMenu = FBResource::Inst().CreateMainMenu(currentLevel,musicOn,soundOn);Add(myMenu);
-
+    myTextAnimation = FBResource::Inst().CreateTextAnimation();Add(myTextAnimation);
+    myTextAnimation->SetVisible(false);
+    
 	Init(currentLevel);
 	myState = STATE_NORMAL;
 
 	if(musicOn)
 		Stream::Inst().Play(MAINZIK);
 
+    myTransition.SetTransitionTime(1.2);
 	myTransition.Init(GlobalSetting::Inst().DisplayWidth,GlobalSetting::Inst().DisplayHeight,
-		Tube3DTransition::TO_LEFT,GlobalSetting::Inst().FrameRate,NULL);
+		Tube3DTransition::TO_LEFT,GlobalSetting::Inst().FrameRate,FBResource::Inst().GetOther()->GetBitmap());
 
 	return true;
 }
@@ -38,6 +41,16 @@ bool FBStage::OnInit()
 void  FBStage::OnRelease()
 {
 	Stream::Inst().Stop(MAINZIK);
+}
+
+void FBStage::OnBackground()
+{
+    GlobalSetting::Inst().Save();
+}
+
+void FBStage::OnForeground()
+{
+    
 }
 
 void FBStage::Init(int level)
@@ -219,6 +232,11 @@ void FBStage::StateMenu()
 			Close();
 		}
 	}
+    
+    if(myState != STATE_MENU)
+    {
+        myTextAnimation->SetVisible(false);
+    }
 }
 
 void FBStage::Render()
@@ -271,12 +289,13 @@ void FBStage::OnChar(int keycode, int unichar)
 
 void FBStage::OnShakeGesture()
 {
-	if(myState != STATE_MENU)
+	if(myState != STATE_MENU && myState != STATE_TRANSITION)
 	{
         myTransparentBackground->SetVisible(true);
         myMenu->SetVisible(true);
         myMenuStateBk = myState;
         myState = STATE_MENU;
+        myTextAnimation->SetVisible(true);
 	}
 }
 

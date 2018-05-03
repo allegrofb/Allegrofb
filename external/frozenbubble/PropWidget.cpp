@@ -75,18 +75,18 @@ void PropWidget::Render(int offsetx,int offsety,double zoom)
 	{
 		configure_all(offsetx,offsety,zoom);
 
-		int cx, cy, cw, ch;
-		al_get_clipping_rectangle(&cx, &cy, &cw, &ch);
+		//int cx, cy, cw, ch;
+		//al_get_clipping_rectangle(&cx, &cy, &cw, &ch);
 
 		for (std::list<Widget *>::iterator it = begin();
 			it != end();++it)
 		{
 			Widget *wid = (*it);
-            wid->set_clippling_rectangle();
+            //wid->set_clippling_rectangle();
 			wid->draw();
 		}
 
-		al_set_clipping_rectangle(cx, cy, cw, ch);
+		//al_set_clipping_rectangle(cx, cy, cw, ch);
 	}
 }
 

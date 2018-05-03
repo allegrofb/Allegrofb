@@ -343,23 +343,44 @@ void UpDownControl::draw()
 	FBResource::Inst().GetFont()->Draw(i_x,i_y,str,1);
 	//--------------------------------------
 	//draw arrow
+//	float p1_x,p1_y,p2_x,p2_y,p3_x,p3_y;
+//	p1_x = x1;
+//	p1_y = y+h/2;
+//	p2_x = x1+h;
+//	p2_y = y;
+//	p3_x = x1+h;
+//	p3_y = y+h;    
+//	al_draw_triangle(p1_x,p1_y,p2_x, p2_y, p3_x, p3_y, fg, 3);
+//
+//	p1_x = x2;
+//	p1_y = y+h/2;
+//	p2_x = x2-h;
+//	p2_y = y;
+//	p3_x = x2-h;
+//	p3_y = y+h;    
+//	al_draw_triangle(p1_x,p1_y,p2_x, p2_y, p3_x, p3_y, fg, 3);
+
+    float x_st,x_ed;
 	float p1_x,p1_y,p2_x,p2_y,p3_x,p3_y;
-	p1_x = x1;
+    x_st = x-h-h/4;
+    x_ed = i_x+i_w+h+h/4;
+    
+	p1_x = x_st;
 	p1_y = y+h/2;
-	p2_x = x1+h;
-	p2_y = y;
-	p3_x = x1+h;
-	p3_y = y+h;    
-	al_draw_triangle(p1_x,p1_y,p2_x, p2_y, p3_x, p3_y, fg, 3);
-
-	p1_x = x2;
+	p2_x = x_st+h/2;
+	p2_y = y+h/4;
+	p3_x = x_st+h/2;
+	p3_y = y+h*3/4;    
+	al_draw_triangle(p1_x,p1_y,p2_x, p2_y, p3_x, p3_y, bg, 1.0);
+    
+	p1_x = x_ed;
 	p1_y = y+h/2;
-	p2_x = x2-h;
-	p2_y = y;
-	p3_x = x2-h;
-	p3_y = y+h;    
-	al_draw_triangle(p1_x,p1_y,p2_x, p2_y, p3_x, p3_y, fg, 3);
-
+	p2_x = x_ed-h/2;
+	p2_y = y+h/4;
+	p3_x = x_ed-h/2;
+	p3_y = y+h*3/4;    
+	al_draw_triangle(p1_x,p1_y,p2_x, p2_y, p3_x, p3_y, bg, 1.0);    
+    
 	//--------------------------------------
 
 	al_set_blender(op,src,dst);

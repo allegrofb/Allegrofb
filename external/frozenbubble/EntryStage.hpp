@@ -19,6 +19,8 @@ public:
 	virtual bool OnMouseMoving(int x, int y);
 	virtual bool OnMouseUp(int x, int y);
     virtual void Render();
+    virtual void OnBackground();
+    virtual void OnForeground();
 private:
     void DisplayLevelOutline(int level);
 private:

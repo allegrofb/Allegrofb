@@ -40,6 +40,7 @@ public:
 	bool IsFinished();
 	void Finish();
 	void CalculateCamera(MODE mode);
+    void SetTransitionTime(double time);
 private:
 	void MovingCamera();
 	ALLEGRO_BITMAP* GetFirst(int w, int h);
@@ -70,6 +71,7 @@ private:
 	ALLEGRO_BITMAP* bitmap_second;
     tex_coordinate tex_coords_1st;
     tex_coordinate tex_coords_2nd;
+    tex_coordinate tex_coords_other;
 	GLuint tex_first;
 	GLuint tex_second;
 

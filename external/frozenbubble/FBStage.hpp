@@ -25,6 +25,8 @@ public:
 	virtual bool OnMouseUp(int x, int y);
 	virtual void OnShakeGesture();
 	virtual void Render();
+    virtual void OnBackground();
+    virtual void OnForeground();
 private:
 	int  currentLevel;
 	bool musicOn;
@@ -57,6 +59,7 @@ private:
 	Prop*		  myLosePanel;
 	Prop*		  myHurryPanel;
 	FBCompressor* myCompressor;
+    PropTextAnimation* myTextAnimation;
 	int           hurryTime;
 	float         angle;
 	int			  fixedBubbles;

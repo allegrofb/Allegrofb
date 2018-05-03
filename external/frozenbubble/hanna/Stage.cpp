@@ -25,7 +25,7 @@ void Stage::Release()
 
 bool Stage::Init()
 {
-	al_identity_transform(&myTransform);
+	//al_identity_transform(&myTransform);
     
 	myMouseButtonDown = false;
 	myExitCode = 0;
@@ -140,12 +140,18 @@ int Stage::Run(ALLEGRO_DISPLAY *display)
 		{
 			//become to background
 			#ifdef ALLEGRO_IPHONE
+            this->OnBackground();
+            al_stop_timer(timer);
             al_iphone_program_has_halted();
 			#endif
 		}
 		else if(event.type == ALLEGRO_EVENT_DISPLAY_SWITCH_IN)
 		{
 			//become to foreground
+            #ifdef ALLEGRO_IPHONE
+            this->OnForeground();
+            al_start_timer(timer);
+            #endif
 		}
 		else if (event.type == ALLEGRO_EVENT_KEY_CHAR) 
 		{

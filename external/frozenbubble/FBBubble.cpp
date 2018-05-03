@@ -46,6 +46,7 @@ void FBBubble::SetLevel(int i)
 	const int* level = FBResource::Inst().Levels->GetLevel(i);
 
 	memset(myData,0,sizeof(Data)*13*8);
+	memset(dataNum,0,sizeof(int)*9);
 
 	if(level)
 	{
@@ -53,11 +54,10 @@ void FBBubble::SetLevel(int i)
 		{
 			for (int i=j%2 ; i<8 ; i++) 
 			{
-				if (level[i+j*8]) 
+				if (level[i+j*8] >= 1 && level[i+j*8] <= 8) 
 				{
 					(myData[i][j]).type = level[j*8+i];
-					//if((myData[i][j]).type < 0 || (myData[i][j]).type > 8)
-					//	(myData[i][j]).type = 0;
+					dataNum[level[j*8+i]]++;
 					(myData[i][j]).l = 190+i*32-(j%2)*16;
 					(myData[i][j]).t = 44+j*28;
 					(myData[i][j]).h = 32;
@@ -65,6 +65,18 @@ void FBBubble::SetLevel(int i)
 				}
 			}
 		}
+	}
+
+	launchOne.type = FBResource::Inst().NextBubble();
+	for(int i = 0;i< 100 && dataNum[launchOne.type] <= 0;i++)
+	{
+		launchOne.type = FBResource::Inst().NextBubble();
+	}
+
+	nextOne.type = 	FBResource::Inst().NextBubble();
+	for(int i = 0;i< 100 && dataNum[nextOne.type] <= 0;i++)
+	{
+		nextOne.type = 	FBResource::Inst().NextBubble();
 	}
 }
 
@@ -446,6 +458,9 @@ void FBBubble::CheckFalls(int id,Pos cur)
 void FBBubble::Fire(int x, int y, float& angle)
 {
 
+	if(y >= (390+32+8))
+		return;
+
 	if(y >= (390+32) && x > (302+32))
 	{
 		angle = 85;
@@ -510,6 +525,10 @@ FUNC_EXIT:
     
 	launchOne.type = nextOne.type;
 	nextOne.type = 	FBResource::Inst().NextBubble();
+	for(int i = 0;i< 100 && dataNum[nextOne.type] <= 0;i++)
+	{
+		nextOne.type = 	FBResource::Inst().NextBubble();
+	}
 }
 
 int FBBubble::Update()
@@ -525,8 +544,8 @@ int FBBubble::Update()
 		{
 			int flag = 0;
 
-			i->t = 390 + (double)i->tick* 8 * -cos(i->angle);	//MAX_BUBBLE_SPEED = 8,  FALL_SPEED = 1
-			i->l = 302 + (double)i->tick* 8 * -sin(i->angle);
+			i->t = 390 + (double)i->tick* SPEED_MOVING * -cos(i->angle);	//MAX_BUBBLE_SPEED = 8,  FALL_SPEED = 1
+			i->l = 302 + (double)i->tick* SPEED_MOVING * -sin(i->angle);
 
 			if(i->angle >= 0 && i->l <= 190)
 			{
@@ -562,8 +581,8 @@ int FBBubble::Update()
 			}
 
 			i->tick++;
-			i->t = 390 + (double)i->tick* 8 * -cos(i->angle);	//MAX_BUBBLE_SPEED = 8,  FALL_SPEED = 1
-			i->l = 302 + (double)i->tick* 8 * -sin(i->angle);
+			i->t = 390 + (double)i->tick* SPEED_MOVING * -cos(i->angle);	//MAX_BUBBLE_SPEED = 8,  FALL_SPEED = 1
+			i->l = 302 + (double)i->tick* SPEED_MOVING * -sin(i->angle);
 
 			if(i->angle >= 0 && i->l <= 190)
 			{
@@ -639,13 +658,14 @@ int FBBubble::Update()
 
 				GetCurrentLeftTop(pos.row,pos.col,i->l,i->t);
 				myData[pos.col][pos.row] = *i;
+				dataNum[i->type]++;
 
 				//test purpose, remove it, hyjiang
-				Pos pos__ = GetCurrentPos(*i);
-				if(pos__.row != pos.row || pos__.col != pos.col)
-				{
-					GetNeighbors(pos__, neighbors);					
-				}
+//				Pos pos__ = GetCurrentPos(*i);
+//				if(pos__.row != pos.row || pos__.col != pos.col)
+//				{
+//					GetNeighbors(pos__, neighbors);					
+//				}
 
 				//check jump
 				std::vector<Pos> posList;
@@ -720,7 +740,7 @@ int FBBubble::Update()
 		}
 		if(i->state == Data::JUMPING)	//jumping
 		{
-			i->jumpingy += 1;
+			i->jumpingy += SPEED_JUMPING;
 			i->l += i->jumpingx;
 			i->t += i->jumpingy;
 
@@ -732,7 +752,7 @@ int FBBubble::Update()
 
 		if(i->state == Data::JUMPING || i->state == Data::FALLING)	//falling
 		{
-			i->jumpingy += 1;
+			i->jumpingy += SPEED_FALLING;
 			i->t += i->jumpingy;
 
 			if(i->t >= 680)
@@ -745,6 +765,7 @@ int FBBubble::Update()
 	for(std::vector<Data>::iterator j = jumpList.begin();
 		j != jumpList.end();j++)
 	{
+		dataNum[j->type]--;
 		std::vector<Data>::iterator i = movingOnes.begin();
 		for(;i != movingOnes.end();i++)
 		{

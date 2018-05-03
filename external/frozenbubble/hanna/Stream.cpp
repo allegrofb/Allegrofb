@@ -46,13 +46,20 @@ bool Stream_::Play(int i, ALLEGRO_PLAYMODE mode)
 	if (!stream_data[i])
 		return false;
 	
-	if(stream_data_id_valid[i])
-		return true;
+//	if(stream_data_id_valid[i])
+//		return true;
 
-	al_set_audio_stream_playmode(stream_data[i], mode);
-	al_attach_audio_stream_to_mixer(stream_data[i], mixer);
-	stream_data_id_valid[i] = true;
-	
+    if(!stream_data_id_valid[i])
+    {
+        al_set_audio_stream_playmode(stream_data[i], mode);
+        al_attach_audio_stream_to_mixer(stream_data[i], mixer);
+        stream_data_id_valid[i] = true;
+	}
+    else
+    {
+        al_set_audio_stream_playing(stream_data[i],true);
+    }
+    
 	return true;
 }
 
@@ -60,10 +67,13 @@ void Stream_::Stop(int i)
 {
 	if(i >= MAX_STREAM_DATA || i < 0 || !myValid)
 		return;
-	if(stream_data_id_valid[i])
+    
+//	if(stream_data_id_valid[i])
 	{
-		al_detach_audio_stream(stream_data[i]);
-		stream_data_id_valid[i] = false;
+        al_set_audio_stream_playing(stream_data[i],false);
+//        al_drain_audio_stream(stream_data[i]);
+//		al_detach_audio_stream(stream_data[i]);
+//		stream_data_id_valid[i] = false;
 	}
 }
 

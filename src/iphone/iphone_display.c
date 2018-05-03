@@ -11,6 +11,8 @@ static float _screen_scale = 1.0, _screen_iscale = 1.0;
 static float _screen_x, _screen_y;
 static float _screen_w, _screen_h;
 static bool _screen_hack;
+//hyjiang for test
+static float _screen_scale_x = 1.0, _screen_scale_y = 1.0;
 
 void _al_iphone_setup_opengl_view(ALLEGRO_DISPLAY *d)
 {
@@ -53,7 +55,13 @@ void _al_iphone_setup_opengl_view(ALLEGRO_DISPLAY *d)
           glScalef(scale, scale, 1);
        }
        else {
-          // TODO
+
+			// TODO
+			//hyjiang for test, should modify here for different resolution
+			_screen_scale_x = w/(float)d->w;
+			_screen_scale_y = h/(float)d->h;
+			glScalef(_screen_scale_x, _screen_scale_y, 1);
+
        }
         
        if (!_screen_hack) {
@@ -84,6 +92,9 @@ void _al_iphone_translate_from_screen(ALLEGRO_DISPLAY *d, int *x, int *y)
    }
    else {
       // TODO
+		//hyjiang for test
+		*x = ox / _screen_scale_x;
+		*y = oy / _screen_scale_y;
    }
 }
 
@@ -99,6 +110,9 @@ void _al_iphone_translate_to_screen(ALLEGRO_DISPLAY *d, int *ox, int *oy)
     }
     else {
         // TODO
+		//hyjiang for test
+		*ox = x * _screen_scale_x;
+		*oy = x * _screen_scale_y;
     }
 }
 

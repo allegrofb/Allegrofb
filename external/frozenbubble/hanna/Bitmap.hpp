@@ -19,7 +19,7 @@ public:
 
 public:	
 	Bitmap(ALLEGRO_BITMAP *p);
-	Bitmap(Bitmap *p);
+//	Bitmap(Bitmap *p);
 	~Bitmap();
     ALLEGRO_BITMAP* GetBitmap(){return bitmap;}
 private:

@@ -29,8 +29,8 @@ protected:
 	virtual bool OnMouseDown(int x, int y){(void)x;(void)y;return false;};
 	virtual bool OnMouseMoving(int x, int y){(void)x;(void)y;return false;};
 	virtual bool OnMouseUp(int x, int y){(void)x;(void)y;return false;};
-	virtual void OnBackGround(){};
-	virtual void OnForeGround(){};
+	virtual void OnBackground(){};
+	virtual void OnForeground(){};
     virtual void OnOrientation(int orientation){(void)orientation;};
 	virtual void OnShakeGesture(){};
 private:

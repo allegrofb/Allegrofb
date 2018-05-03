@@ -66,7 +66,14 @@ private:
 		int col;
 	};
 
+    enum
+    {
+        SPEED_MOVING  = 12,
+        SPEED_FALLING = 1,
+        SPEED_JUMPING = 1,
+    };
 	Data myData[8][13];
+	int  dataNum[9];
 	Data nextOne;
 	Data launchOne;
 	std::vector<Data> movingOnes;

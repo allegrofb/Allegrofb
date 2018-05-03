@@ -94,13 +94,15 @@ public:
 	PropWidget* CreateEntryMenu(int levelnum, bool music_on, bool sound_on);
 	PropBase* CreateTransparentBackground();
 	PropWidget* CreateMainMenu(int levelnum, bool music_on, bool sound_on);
-
+    PropTextAnimation* CreateTextAnimation();
+    PropBase* CreateTransparentBackground4MainMenu();
 	int NextBubble();
 	int JumpingX();
 	int JumpingY();
 	int FallingY();
 
-	BitmapFont* GetFont(){return pFont;};
+	BitmapFont* GetFont(){return pFont;}
+    Bitmap*     GetOther(){return pVoidPanel;}
 };
 
 typedef singleton_default<FBResource_> FBResource;

@@ -27,7 +27,7 @@ FBLevels* FBLevels::LoadFrom(const char* filename)
 
 		for(int i = 0,col = row % 2?1:0;buf[i] && col <=8;i++)
 		{
-			if(buf[i] >= '0' && buf[i] <= '9' )
+			if(buf[i] >= '0' && buf[i] <= '7' )
 			{
 				level[row*8+col] = buf[i] - '0' + 1;
 				col++;

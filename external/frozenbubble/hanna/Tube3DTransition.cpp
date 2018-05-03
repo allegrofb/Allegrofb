@@ -6,18 +6,18 @@ Tube3DTransition::Tube3DTransition()
 	: data_p(NULL)
 {
 	scale_orignal = 1;
-	//scale_dithering_value = 0.85;
-	scale_dithering_value = 0.90;
+//	scale_dithering_value = 0.85;
+	scale_dithering_value = 0.85;
 
 	angley_start = 0;
 	angley_end = -90.0;		//-90, to left, 90, to right
 
 	anglex_orignal = 0;
-	//anglex_dithering_value = 6.0;
-	anglex_dithering_value = 5.0;
+//	anglex_dithering_value = 6.0;
+	anglex_dithering_value = 7.0;
 
-	intermediate_delay = 0.9;
-	transition_time = 1.2;
+	intermediate_delay = 0.35;
+	transition_time = 0.8;
 	frame_rate = 30.0;
 
 	bitmap_first	= NULL;
@@ -42,13 +42,19 @@ Tube3DTransition::~Tube3DTransition()
 //
 //	glDeleteTextures(3,tmp);
 //
-	if(bitmap_other)
-		al_destroy_bitmap(bitmap_other);
+//	if(bitmap_other)
+//		al_destroy_bitmap(bitmap_other);
 	if(bitmap_first)
 		al_destroy_bitmap(bitmap_first);
 	if(bitmap_second)
 		al_destroy_bitmap(bitmap_second);
 }
+
+void Tube3DTransition::SetTransitionTime(double time)
+{
+    this->transition_time = time;
+}
+
 
 void Tube3DTransition::Init(int w, int h, MODE mode, double frameRate, ALLEGRO_BITMAP* others)
 {
@@ -61,18 +67,30 @@ void Tube3DTransition::Init(int w, int h, MODE mode, double frameRate, ALLEGRO_B
 
 	if(others)
 	{
-		if(bitmap_other)
-			al_destroy_bitmap(bitmap_other);
+//		if(bitmap_other)
+//			al_destroy_bitmap(bitmap_other);
 
 		bitmap_other = others;
 
-		if(tex_other)
-		{
-			GLuint tmp[] = {tex_other};
-			glDeleteTextures(1,tmp);
-		}
+//		if(tex_other)
+//		{
+//			GLuint tmp[] = {tex_other};
+//			glDeleteTextures(1,tmp);
+//		}
 
 		tex_other = al_get_opengl_texture(others);
+        int other_w = w, other_h = h;
+        int t_w = 0,t_h = 0;
+        
+        other_h = al_get_bitmap_height(this->bitmap_other);
+        other_w = al_get_bitmap_width(this->bitmap_other);        
+        al_get_opengl_texture_size(this->bitmap_other, &t_w, &t_h);
+        
+        if(t_w && t_h)
+        {
+            tex_coords_other.x1 = (GLfloat)other_w/(GLfloat)t_w;
+            tex_coords_other.y1 = (GLfloat)other_h/(GLfloat)t_h;
+        }                
 	}
 }
 
@@ -146,7 +164,7 @@ ALLEGRO_BITMAP* Tube3DTransition::GetFirst(int w, int h)
         
         int t_w = 0,t_h = 0;
         al_get_opengl_texture_size(this->bitmap_first, &t_w, &t_h);
-        if(w && h)
+        if(t_w && t_h)
         {
             tex_coords_1st.x1 = (GLfloat)w/(GLfloat)t_w;
             tex_coords_1st.y1 = (GLfloat)h/(GLfloat)t_h;
@@ -165,7 +183,7 @@ ALLEGRO_BITMAP* Tube3DTransition::GetSecond(int w, int h)
         
         int t_w = 0,t_h = 0;
         al_get_opengl_texture_size(this->bitmap_second, &t_w, &t_h);
-        if(w && h)
+        if(t_w && t_h)
         {
             tex_coords_2nd.x1 = (GLfloat)w/(GLfloat)t_w;
             tex_coords_2nd.y1 = (GLfloat)h/(GLfloat)t_h;
@@ -256,8 +274,13 @@ void Tube3DTransition::Prepare()
 		tex_array[LEFT]		= s;
 		tex_array[TOP]		= o;
 		tex_array[BOTTOM]	= o;
+        
 		tex_coords[FRONT]	= tex_coords_1st;
 		tex_coords[LEFT]	= tex_coords_2nd;
+		tex_coords[RIGHT]	= tex_coords_other;
+		tex_coords[BACK]    = tex_coords_other;
+		tex_coords[TOP]		= tex_coords_other;
+		tex_coords[BOTTOM]	= tex_coords_other;
 	}
 	else if(transition_mode == TO_LEFT)
 	{
@@ -269,6 +292,10 @@ void Tube3DTransition::Prepare()
 		tex_array[BOTTOM]	= o;
 		tex_coords[FRONT]	= tex_coords_1st;
 		tex_coords[RIGHT]	= tex_coords_2nd;
+		tex_coords[LEFT]	= tex_coords_other;
+		tex_coords[BACK]    = tex_coords_other;
+		tex_coords[TOP]		= tex_coords_other;
+		tex_coords[BOTTOM]	= tex_coords_other;        
 	}
 	else if(transition_mode == TO_LEFT_FRONT)
 	{
@@ -280,6 +307,10 @@ void Tube3DTransition::Prepare()
 		tex_array[BOTTOM]	= o;
 		tex_coords[FRONT]	= tex_coords_1st;
 		tex_coords[RIGHT]	= tex_coords_2nd;
+		tex_coords[LEFT]	= tex_coords_other;
+		tex_coords[BACK]    = tex_coords_other;
+		tex_coords[TOP]		= tex_coords_other;
+		tex_coords[BOTTOM]	= tex_coords_other;        
 	}
 	else if(transition_mode == TO_RIGHT_FRONT)
 	{
@@ -290,7 +321,11 @@ void Tube3DTransition::Prepare()
 		tex_array[TOP]		= o;
 		tex_array[BOTTOM]	= o;
 		tex_coords[FRONT]	= tex_coords_1st;
-		tex_coords[LEFT]	= tex_coords_2nd;        
+		tex_coords[LEFT]	= tex_coords_2nd;    
+		tex_coords[RIGHT]	= tex_coords_other;
+		tex_coords[BACK]    = tex_coords_other;
+		tex_coords[TOP]		= tex_coords_other;
+		tex_coords[BOTTOM]	= tex_coords_other;        
 	}
 	else
 	{
@@ -301,7 +336,11 @@ void Tube3DTransition::Prepare()
 		tex_array[TOP]		= o;
 		tex_array[BOTTOM]	= o;
 		tex_coords[FRONT]	= tex_coords_1st;
-		tex_coords[RIGHT]	= tex_coords_2nd;        
+		tex_coords[RIGHT]	= tex_coords_2nd;     
+		tex_coords[LEFT]	= tex_coords_other;
+		tex_coords[BACK]    = tex_coords_other;
+		tex_coords[TOP]		= tex_coords_other;
+		tex_coords[BOTTOM]	= tex_coords_other;        
 	}
 
 	current_frame = 0;
@@ -356,21 +395,6 @@ void Tube3DTransition::Render(int x, int y, double zoom)
 		MovingCamera();
 		this->current_frame++;
 	}
-
-    GLfloat tex_x_first[2] = {0};
-    GLfloat tex_y_first[2] = {0};
-    int w = 0,h = 0;
-    al_get_opengl_texture_size(this->bitmap_first, &w, &h);
-    if(w == 0 || h == 0)
-    {
-        tex_x_first[1] = 1;
-        tex_y_first[1] = 1;
-    }
-    else
-    {
-        tex_x_first[1] = 320.0/(GLfloat)w;
-        tex_y_first[1] = 480.0/(GLfloat)h;
-    }
     
     GLfloat texcoords[4][2];
     GLfloat vertices[4][3];
@@ -395,13 +419,13 @@ void Tube3DTransition::Render(int x, int y, double zoom)
 
     /* Top Face */
     glBindTexture(GL_TEXTURE_2D, tex_array[TOP]);
-    texcoords[0][0]=1.0f; texcoords[0][1]=1.0f;
+    texcoords[0][0]=tex_coords[TOP].x1; texcoords[0][1]=tex_coords[TOP].y1;
     vertices[0][0]=-1.0f; vertices[0][1]=1.0f; vertices[0][2]=-1.0f;
-    texcoords[1][0]=1.0f; texcoords[1][1]=0.0f;
+    texcoords[1][0]=tex_coords[TOP].x1; texcoords[1][1]=0.0f;
     vertices[1][0]=-1.0f; vertices[1][1]=1.0f; vertices[1][2]=1.0f;
     texcoords[2][0]=0.0f; texcoords[2][1]=0.0f;
     vertices[2][0]=1.0f;  vertices[2][1]=1.0f; vertices[2][2]=1.0f;
-    texcoords[3][0]=0.0f; texcoords[3][1]=1.0f;
+    texcoords[3][0]=0.0f; texcoords[3][1]=tex_coords[TOP].y1;
     vertices[3][0]=1.0f;  vertices[3][1]=1.0f; vertices[3][2]=-1.0f;
 
     /* Draw one textured plane using two stripped triangles */
@@ -409,11 +433,11 @@ void Tube3DTransition::Render(int x, int y, double zoom)
 
     /* Bottom Face */
     glBindTexture(GL_TEXTURE_2D, tex_array[BOTTOM]);
-    texcoords[0][0]=0.0f; texcoords[0][1]=1.0f;
+    texcoords[0][0]=0.0f; texcoords[0][1]=tex_coords[BOTTOM].y1;
     vertices[0][0]=-1.0f; vertices[0][1]=-1.0f; vertices[0][2]=-1.0f;
-    texcoords[1][0]=1.0f; texcoords[1][1]=1.0f;
+    texcoords[1][0]=tex_coords[BOTTOM].x1; texcoords[1][1]=tex_coords[BOTTOM].y1;
     vertices[1][0]=1.0f;  vertices[1][1]=-1.0f; vertices[1][2]=-1.0f;
-    texcoords[2][0]=1.0f; texcoords[2][1]=0.0f;
+    texcoords[2][0]=tex_coords[BOTTOM].x1; texcoords[2][1]=0.0f;
     vertices[2][0]=1.0f;  vertices[2][1]=-1.0f; vertices[2][2]=1.0f;
     texcoords[3][0]=0.0f; texcoords[3][1]=0.0f;
     vertices[3][0]=-1.0f; vertices[3][1]=-1.0f; vertices[3][2]=1.0f;
@@ -426,11 +450,11 @@ void Tube3DTransition::Render(int x, int y, double zoom)
 
     texcoords[0][0]=0.0f; texcoords[0][1]=0.0f;
     vertices[0][0]=-1.0f; vertices[0][1]=-1.0f; vertices[0][2]=1.0f;
-    texcoords[1][0]=tex_x_first[1]; texcoords[1][1]=0.0f;
+    texcoords[1][0]=tex_coords[FRONT].x1; texcoords[1][1]=0.0f;
     vertices[1][0]=1.0f;  vertices[1][1]=-1.0f; vertices[1][2]=1.0f;
-    texcoords[2][0]=tex_x_first[1] ; texcoords[2][1]=tex_y_first[1] ;
+    texcoords[2][0]=tex_coords[FRONT].x1; texcoords[2][1]=tex_coords[FRONT].y1;
     vertices[2][0]=1.0f;  vertices[2][1]=1.0f; vertices[2][2]=1.0f;
-    texcoords[3][0]=0.0f; texcoords[3][1]=tex_y_first[1] ;
+    texcoords[3][0]=0.0f; texcoords[3][1]=tex_coords[FRONT].y1;
     vertices[3][0]=-1.0f; vertices[3][1]=1.0f; vertices[3][2]=1.0f;
 
     /* Draw one textured plane using two stripped triangles */
@@ -441,11 +465,11 @@ void Tube3DTransition::Render(int x, int y, double zoom)
 
     texcoords[0][0]=0.0f; texcoords[0][1]=0.0f;
     vertices[0][0]=1.0f;  vertices[0][1]=-1.0f; vertices[0][2]=1.0f;
-    texcoords[1][0]=tex_x_first[1] ; texcoords[1][1]=0.0f;
+    texcoords[1][0]=tex_coords[RIGHT].x1; texcoords[1][1]=0.0f;
     vertices[1][0]=1.0f;  vertices[1][1]=-1.0f; vertices[1][2]=-1.0f;
-    texcoords[2][0]=tex_x_first[1] ; texcoords[2][1]=tex_y_first[1] ;
+    texcoords[2][0]=tex_coords[RIGHT].x1; texcoords[2][1]=tex_coords[RIGHT].y1;
     vertices[2][0]=1.0f;  vertices[2][1]=1.0f; vertices[2][2]=-1.0f;
-    texcoords[3][0]=0.0f; texcoords[3][1]=tex_y_first[1] ;
+    texcoords[3][0]=0.0f; texcoords[3][1]=tex_coords[RIGHT].y1;
     vertices[3][0]=1.0f;  vertices[3][1]=1.0f; vertices[3][2]=1.0f;
 
     /* Draw one textured plane using two stripped triangles */
@@ -472,11 +496,11 @@ void Tube3DTransition::Render(int x, int y, double zoom)
 
     texcoords[0][0]=0.0f; texcoords[0][1]=0.0f;
     vertices[0][0]=-1.0f; vertices[0][1]=-1.0f; vertices[0][2]=-1.0f;
-    texcoords[1][0]=tex_x_first[1]; texcoords[1][1]=0.0f;
+    texcoords[1][0]=tex_coords[LEFT].x1; texcoords[1][1]=0.0f;
     vertices[1][0]=-1.0f; vertices[1][1]=-1.0f; vertices[1][2]=1.0f;
-    texcoords[2][0]=tex_x_first[1]; texcoords[2][1]=tex_y_first[1];
+    texcoords[2][0]=tex_coords[LEFT].x1;texcoords[2][1]=tex_coords[LEFT].y1;
     vertices[2][0]=-1.0f; vertices[2][1]=1.0f; vertices[2][2]=1.0f;
-    texcoords[3][0]=0.0f; texcoords[3][1]=tex_y_first[1];
+    texcoords[3][0]=0.0f; texcoords[3][1]=tex_coords[LEFT].y1;
     vertices[3][0]=-1.0f; vertices[3][1]=1.0f; vertices[3][2]=-1.0f;
 
     /* Draw one textured plane using two stripped triangles */
@@ -490,6 +514,159 @@ void Tube3DTransition::Render(int x, int y, double zoom)
     /* Flush all drawings */
     glFinish();
 }
+
+//void Tube3DTransition::Render(int x, int y, double zoom)
+//{
+//    (void)x;
+//    (void)y;
+//    (void)zoom;
+//    
+//	if(intermediate_num && current_frame == this->frame_num / 2)
+//	{
+//		intermediate_num--;
+//	}
+//	else
+//	{
+//		MovingCamera();
+//		this->current_frame++;
+//	}
+//    
+//    GLfloat tex_x_first[2] = {0};
+//    GLfloat tex_y_first[2] = {0};
+//    int w = 0,h = 0;
+//    al_get_opengl_texture_size(this->bitmap_first, &w, &h);
+//    if(w == 0 || h == 0)
+//    {
+//        tex_x_first[1] = 1;
+//        tex_y_first[1] = 1;
+//    }
+//    else
+//    {
+//        tex_x_first[1] = 320.0/(GLfloat)w;
+//        tex_y_first[1] = 480.0/(GLfloat)h;
+//    }
+//    
+//    GLfloat texcoords[4][2];
+//    GLfloat vertices[4][3];
+//    GLubyte indices[4]={0, 1, 3, 2}; /* QUAD to TRIANGLE_STRIP conversion; */
+//    
+//    /* Clear The Screen And The Depth Buffer */
+//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//    
+//    /* Move Into The Screen 5 Units */
+//    glLoadIdentity();
+//    
+//    /* Select Our Texture */
+//	glEnable(GL_TEXTURE_2D);
+//    
+//    /* Set pointers to vertices and texcoords */
+//    glVertexPointer(3, GL_FLOAT, 0, vertices);
+//    glTexCoordPointer(2, GL_FLOAT, 0, texcoords);
+//    
+//    /* Enable vertices and texcoords arrays */
+//    glEnableClientState(GL_VERTEX_ARRAY);
+//    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+//    
+//    /* Top Face */
+//    glBindTexture(GL_TEXTURE_2D, tex_array[TOP]);
+//    texcoords[0][0]=1.0f; texcoords[0][1]=1.0f;
+//    vertices[0][0]=-1.0f; vertices[0][1]=1.0f; vertices[0][2]=-1.0f;
+//    texcoords[1][0]=1.0f; texcoords[1][1]=0.0f;
+//    vertices[1][0]=-1.0f; vertices[1][1]=1.0f; vertices[1][2]=1.0f;
+//    texcoords[2][0]=0.0f; texcoords[2][1]=0.0f;
+//    vertices[2][0]=1.0f;  vertices[2][1]=1.0f; vertices[2][2]=1.0f;
+//    texcoords[3][0]=0.0f; texcoords[3][1]=1.0f;
+//    vertices[3][0]=1.0f;  vertices[3][1]=1.0f; vertices[3][2]=-1.0f;
+//    
+//    /* Draw one textured plane using two stripped triangles */
+//    glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_BYTE, indices);
+//    
+//    /* Bottom Face */
+//    glBindTexture(GL_TEXTURE_2D, tex_array[BOTTOM]);
+//    texcoords[0][0]=0.0f; texcoords[0][1]=1.0f;
+//    vertices[0][0]=-1.0f; vertices[0][1]=-1.0f; vertices[0][2]=-1.0f;
+//    texcoords[1][0]=1.0f; texcoords[1][1]=1.0f;
+//    vertices[1][0]=1.0f;  vertices[1][1]=-1.0f; vertices[1][2]=-1.0f;
+//    texcoords[2][0]=1.0f; texcoords[2][1]=0.0f;
+//    vertices[2][0]=1.0f;  vertices[2][1]=-1.0f; vertices[2][2]=1.0f;
+//    texcoords[3][0]=0.0f; texcoords[3][1]=0.0f;
+//    vertices[3][0]=-1.0f; vertices[3][1]=-1.0f; vertices[3][2]=1.0f;
+//    
+//    /* Draw one textured plane using two stripped triangles */
+//    glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_BYTE, indices);
+//    
+//    /* Front Face */
+//    glBindTexture(GL_TEXTURE_2D, tex_array[FRONT]);
+//    
+//    texcoords[0][0]=0.0f; texcoords[0][1]=0.0f;
+//    vertices[0][0]=-1.0f; vertices[0][1]=-1.0f; vertices[0][2]=1.0f;
+//    texcoords[1][0]=tex_x_first[1]; texcoords[1][1]=0.0f;
+//    vertices[1][0]=1.0f;  vertices[1][1]=-1.0f; vertices[1][2]=1.0f;
+//    texcoords[2][0]=tex_x_first[1] ; texcoords[2][1]=tex_y_first[1] ;
+//    vertices[2][0]=1.0f;  vertices[2][1]=1.0f; vertices[2][2]=1.0f;
+//    texcoords[3][0]=0.0f; texcoords[3][1]=tex_y_first[1] ;
+//    vertices[3][0]=-1.0f; vertices[3][1]=1.0f; vertices[3][2]=1.0f;
+//    
+//    /* Draw one textured plane using two stripped triangles */
+//    glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_BYTE, indices);
+//    
+//    /* Right face */
+//    glBindTexture(GL_TEXTURE_2D, tex_array[RIGHT]);
+//    
+//    texcoords[0][0]=0.0f; texcoords[0][1]=0.0f;
+//    vertices[0][0]=1.0f;  vertices[0][1]=-1.0f; vertices[0][2]=1.0f;
+//    texcoords[1][0]=tex_x_first[1] ; texcoords[1][1]=0.0f;
+//    vertices[1][0]=1.0f;  vertices[1][1]=-1.0f; vertices[1][2]=-1.0f;
+//    texcoords[2][0]=tex_x_first[1] ; texcoords[2][1]=tex_y_first[1] ;
+//    vertices[2][0]=1.0f;  vertices[2][1]=1.0f; vertices[2][2]=-1.0f;
+//    texcoords[3][0]=0.0f; texcoords[3][1]=tex_y_first[1] ;
+//    vertices[3][0]=1.0f;  vertices[3][1]=1.0f; vertices[3][2]=1.0f;
+//    
+//    /* Draw one textured plane using two stripped triangles */
+//    glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_BYTE, indices);
+//    
+//    /* Back Face */
+//    glBindTexture(GL_TEXTURE_2D, tex_array[BACK]);
+//    
+//    /* Normal Pointing Away From Viewer */
+//    texcoords[0][0]=0.0f; texcoords[0][1]=0.0f;
+//    vertices[0][0]=1.0f; vertices[0][1]=-1.0f; vertices[0][2]=-1.0f;
+//    texcoords[1][0]=1.0f; texcoords[1][1]=0.0f;
+//    vertices[1][0]=-1.0f; vertices[1][1]=-1.0f; vertices[1][2]=-1.0f;
+//    texcoords[2][0]=1.0f; texcoords[2][1]=1.0f;
+//    vertices[2][0]=-1.0f;  vertices[2][1]=1.0f; vertices[2][2]=-1.0f;
+//    texcoords[3][0]=0.0f; texcoords[3][1]=1.0f;
+//    vertices[3][0]=1.0f; vertices[3][1]=1.0f; vertices[3][2]=-1.0f;
+//    
+//    /* Draw one textured plane using two stripped triangles */
+//    glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_BYTE, indices);
+//    
+//    /* Left Face*/
+//    glBindTexture(GL_TEXTURE_2D, tex_array[LEFT]);
+//    
+//    texcoords[0][0]=0.0f; texcoords[0][1]=0.0f;
+//    vertices[0][0]=-1.0f; vertices[0][1]=-1.0f; vertices[0][2]=-1.0f;
+//    texcoords[1][0]=tex_x_first[1]; texcoords[1][1]=0.0f;
+//    vertices[1][0]=-1.0f; vertices[1][1]=-1.0f; vertices[1][2]=1.0f;
+//    texcoords[2][0]=tex_x_first[1]; texcoords[2][1]=tex_y_first[1];
+//    vertices[2][0]=-1.0f; vertices[2][1]=1.0f; vertices[2][2]=1.0f;
+//    texcoords[3][0]=0.0f; texcoords[3][1]=tex_y_first[1];
+//    vertices[3][0]=-1.0f; vertices[3][1]=1.0f; vertices[3][2]=-1.0f;
+//    
+//    /* Draw one textured plane using two stripped triangles */
+//    glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_BYTE, indices);
+//    
+//    /* Disable texcoords and vertices arrays */
+//    glDisableClientState(GL_NORMAL_ARRAY);
+//    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+//    glDisableClientState(GL_VERTEX_ARRAY);
+//    
+//    /* Flush all drawings */
+//    glFinish();
+//}
+
+
+
 
 
 

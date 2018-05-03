@@ -14,7 +14,8 @@ bool EntryStage::OnInit()
 	music_on = GlobalSetting::Inst().MusicOn;
 	sound_on = GlobalSetting::Inst().SoundOn;
 	myMenu = FBResource::Inst().CreateEntryMenu(level,music_on,sound_on);Add(myMenu);
-
+    Add(FBResource::Inst().CreateTextAnimation());
+    
     myBubbleLevel = new PropBitmap(0,0,320,640,false);  //background resolution: 640x480
                                                         //display: 320x480
                                                         //bitmap:  640x320
@@ -25,8 +26,18 @@ bool EntryStage::OnInit()
     
 	myState = STATE_NORMAL;
 	myTransition.Init(GlobalSetting::Inst().DisplayWidth,GlobalSetting::Inst().DisplayHeight,
-		Tube3DTransition::TO_LEFT_FRONT,GlobalSetting::Inst().FrameRate,NULL);
+                      Tube3DTransition::TO_LEFT_FRONT,GlobalSetting::Inst().FrameRate,FBResource::Inst().GetOther()->GetBitmap());
 	return true;
+}
+
+void EntryStage::OnForeground()
+{
+    
+}
+
+void EntryStage::OnBackground()
+{
+    GlobalSetting::Inst().Save();
 }
 
 void EntryStage::DisplayLevelOutline(int level)

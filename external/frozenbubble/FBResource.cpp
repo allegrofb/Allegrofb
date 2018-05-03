@@ -1,4 +1,5 @@
 #include "FBResource.hpp"
+#include "GlobalSetting.hpp"
 
 const char* RES_LEVELS = "res/levels.txt";
 
@@ -61,7 +62,6 @@ const char* RES_VOID_PANEL      = "res/void_panel.jpg";
 const char* RES_WIN_PANEL       = "res/win_panel.jpg";
 const char* RES_BACKGROUND      = "res/background.jpg";
 const char* RES_BUBBLE_FONT     = "res/bubble_font.gif";
-//const char* RES_BUBBLE_FONT     = "res/font-hi.png";
 const char* RES_APP_FROZEN_BUBBLE   = "res/app_frozen_bubble.png";
 const char* RES_COMPRESSOR_BODY     = "res/compressor_body.png";
 
@@ -152,6 +152,8 @@ void FBResource_::Destroy(void)
 	RELEASE_RES( pWinPanel)
 
 	RELEASE_RES(Levels)
+    
+    GlobalSetting::Inst().Destroy();
 }
 
 bool FBResource_::Load(void)
@@ -186,6 +188,9 @@ bool FBResource_::Load(void)
 	Levels = FBLevels::LoadFrom(RES_LEVELS);
 
 	DebugMessage = new PropFont(pFont,10,50,10,10);	//here has bug ?????, where to release memory, in FBStage ? or here ?
+    
+    GlobalSetting::Inst().Load();
+    
 	return true;
 }
 
@@ -229,9 +234,15 @@ Prop* FBResource_::CreateSplash()
 	return new Prop(pSplash,118,0,480,404);
 }
 
+PropTextAnimation* FBResource_::CreateTextAnimation()
+{
+    const char* str = "WELCOME! CLONE FROZEN BUBBLE BASED ON ALLEGRO : ALLEGROFB AT GMAIL.COM";
+    return new PropTextAnimation(pFont,160,0,40,320,str);
+}
+
 int FBResource_::NextBubble()
 {
-	return rand() % 8 + 1;
+	return abs(rand()) % 8 + 1;
 }
 
 int FBResource_::JumpingX()
@@ -297,6 +308,13 @@ struct F
 PropBase* FBResource_::CreateTransparentBackground()
 {
 	PropDrawing<F>* prop = new PropDrawing<F>(118+42,0+61,437-61,362-42);//362-42,437-61
+//    PropDrawing<F>* prop = new PropDrawing<F>(118+42,5,437-61,362-42);//362-42,437-61
+	return prop;
+}
+
+PropBase* FBResource_::CreateTransparentBackground4MainMenu()
+{
+    PropDrawing<F>* prop = new PropDrawing<F>(118+42,5,437-5,362-42);//362-42,437-61
 	return prop;
 }
 
@@ -314,7 +332,8 @@ PropWidget* FBResource_::CreateEntryMenu(int levelnum, bool music_on, bool sound
 	sound->id = MENU_ID_SOUND;
 	Button* exit  = new Button("EXIT");
 	exit->id = MENU_ID_EXIT;
-	int button_start_x = 190;
+//	int button_start_x = 190;
+    int button_start_x = 210;
 	int button_start_y = 100;
 	int button_inc_y = 10;
 	int button_w = 200;
@@ -357,7 +376,7 @@ PropWidget* FBResource_::CreateMainMenu(int levelnum, bool music_on, bool sound_
 	sound->id = MENU_ID_SOUND;
 	Button* exit  = new Button("EXIT");
 	exit->id = MENU_ID_EXIT;
-	int button_start_x = 190;
+	int button_start_x = 210;
 	int button_start_y = 100;
 	int button_inc_y = 10;
 	int button_w = 200;
@@ -381,4 +400,78 @@ PropWidget* FBResource_::CreateMainMenu(int levelnum, bool music_on, bool sound_
 
 	return prop;
 }
+
+
+
+void GlobalSetting_::Destroy(void)
+{
+    Save();
+}
+
+bool GlobalSetting_::Load(void)
+{
+    ALLEGRO_FILE* file = NULL;
+    file = al_fopen(util_get_documents_path("fb.setting"), "r+b");
+    if(file)
+    {
+        if(al_fsize(file) > 0 )
+        {
+            al_fread(file, &MusicOn, sizeof(MusicOn));
+            al_fread(file, &SoundOn, sizeof(SoundOn));
+            al_fread(file, &LevelNum, sizeof(LevelNum));
+        }
+        else
+        {
+            al_fwrite(file, &MusicOn, sizeof(MusicOn));
+            al_fwrite(file, &SoundOn, sizeof(SoundOn));
+            al_fwrite(file, &LevelNum, sizeof(LevelNum));
+        }
+        
+        al_fclose(file);
+        return true;
+    }
+    
+    return false;
+}
+
+
+void GlobalSetting_::Save(void)
+{
+    ALLEGRO_FILE* file = NULL;
+    file = al_fopen(util_get_documents_path("fb.setting"), "wb");
+    if(file)
+    {
+        al_fwrite(file, &MusicOn, sizeof(MusicOn));
+        al_fwrite(file, &SoundOn, sizeof(SoundOn));
+        al_fwrite(file, &LevelNum, sizeof(LevelNum));
+        
+        al_fclose(file);
+        return;
+    }
+    
+    return;    
+}
+
+void GlobalSetting_::Restore(void)
+{
+    ALLEGRO_FILE* file = NULL;
+    file = al_fopen(util_get_documents_path("fb.setting"), "rb");
+    if(file)
+    {
+        if(al_fsize(file) > 0 )
+        {
+            al_fread(file, &MusicOn, sizeof(MusicOn));
+            al_fread(file, &SoundOn, sizeof(SoundOn));
+            al_fread(file, &LevelNum, sizeof(LevelNum));
+        }
+        
+        al_fclose(file);
+        return;
+    }
+    return;
+}
+
+
+
+
 

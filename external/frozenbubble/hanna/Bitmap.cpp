@@ -7,12 +7,12 @@ Bitmap::Bitmap(ALLEGRO_BITMAP *p)
 	width = al_get_bitmap_width(p);
 }
 
-Bitmap::Bitmap(Bitmap *p)
-{
-	bitmap = p->bitmap;
-	height = p->height;
-	width = p->width;
-}
+//Bitmap::Bitmap(Bitmap *p)
+//{
+//	bitmap = p->bitmap;
+//	height = p->height;
+//	width = p->width;
+//}
 
 Bitmap::~Bitmap()
 {
