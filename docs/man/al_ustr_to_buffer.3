@@ -1,0 +1,21 @@
+.TH al_ustr_to_buffer 3 "" "Allegro reference manual"
+.SH NAME
+.PP
+al_ustr_to_buffer
+.SH SYNOPSIS
+.IP
+.nf
+\f[C]
+#include\ <allegro5/allegro.h>
+
+void\ al_ustr_to_buffer(const\ ALLEGRO_USTR\ *us,\ char\ *buffer,\ int\ size)
+\f[]
+.fi
+.SH DESCRIPTION
+.PP
+Write the contents of the string into a pre-allocated buffer of the
+given size in bytes.
+The result will always be 0-terminated.
+.SH SEE ALSO
+.PP
+al_cstr(3), al_cstr_dup(3)

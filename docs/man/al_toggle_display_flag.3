@@ -1,0 +1,30 @@
+.TH al_toggle_display_flag 3 "" "Allegro reference manual"
+.SH NAME
+.PP
+al_toggle_display_flag
+.SH SYNOPSIS
+.IP
+.nf
+\f[C]
+#include\ <allegro5/allegro.h>
+
+bool\ al_toggle_display_flag(ALLEGRO_DISPLAY\ *display,\ int\ flag,\ bool\ onoff)
+\f[]
+.fi
+.SH DESCRIPTION
+.PP
+Enable or disable one of the display flags.
+The flags are the same as for al_set_new_display_flags(3).
+The only flags that can be changed after creation are:
+.IP \[bu] 2
+ALLEGRO_FULLSCREEN_WINDOW
+.IP \[bu] 2
+ALLEGRO_NOFRAME
+.PP
+Returns true if the driver supports toggling the specified flag
+else false.
+You can use al_get_display_flags(3) to query whether the given
+display property actually changed.
+.SH SEE ALSO
+.PP
+al_set_new_display_flags(3), al_get_display_flags(3)

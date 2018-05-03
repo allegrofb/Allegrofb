@@ -1,0 +1,33 @@
+.TH al_draw_text 3 "" "Allegro reference manual"
+.SH NAME
+.PP
+al_draw_text
+.SH SYNOPSIS
+.IP
+.nf
+\f[C]
+#include\ <allegro5/allegro_font.h>
+
+void\ al_draw_text(const\ ALLEGRO_FONT\ *font,
+\ \ \ ALLEGRO_COLOR\ color,\ float\ x,\ float\ y,\ int\ flags,
+\ \ \ char\ const\ *text)\ 
+\f[]
+.fi
+.SH DESCRIPTION
+.PP
+Writes the 0-terminated string \f[C]text\f[] onto \f[C]bmp\f[] at
+position \f[C]x\f[], \f[C]y\f[], using the specified \f[C]font\f[].
+.PP
+The \f[C]flags\f[] parameter can be 0 or one of the following
+flags:
+.IP \[bu] 2
+ALLEGRO_ALIGN_LEFT - Draw the text left-aligned (same as 0).
+.IP \[bu] 2
+ALLEGRO_ALIGN_CENTRE - Draw the text centered around the given
+position.
+.IP \[bu] 2
+ALLEGRO_ALIGN_RIGHT - Draw the text right-aligned to the given
+position.
+.SH SEE ALSO
+.PP
+al_draw_ustr(3), al_draw_textf(3), al_draw_justified_text(3)

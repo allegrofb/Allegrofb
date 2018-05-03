@@ -1,0 +1,30 @@
+.TH ALLEGRO_USER_EVENT 3 "" "Allegro reference manual"
+.SH NAME
+.PP
+ALLEGRO_USER_EVENT
+.SH SYNOPSIS
+.IP
+.nf
+\f[C]
+#include\ <allegro5/allegro.h>
+
+typedef\ struct\ ALLEGRO_USER_EVENT\ ALLEGRO_USER_EVENT;
+\f[]
+.fi
+.SH DESCRIPTION
+.PP
+An event structure that can be emitted by user event sources.
+These are the public fields:
+.IP \[bu] 2
+ALLEGRO_EVENT_SOURCE *source;
+.IP \[bu] 2
+intptr_t data1;
+.IP \[bu] 2
+intptr_t data2;
+.IP \[bu] 2
+intptr_t data3;
+.IP \[bu] 2
+intptr_t data4;
+.SH SEE ALSO
+.PP
+al_emit_user_event(3)

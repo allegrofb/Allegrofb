@@ -1,0 +1,24 @@
+.TH al_fputc 3 "" "Allegro reference manual"
+.SH NAME
+.PP
+al_fputc
+.SH SYNOPSIS
+.IP
+.nf
+\f[C]
+#include\ <allegro5/allegro.h>
+
+int\ al_fputc(ALLEGRO_FILE\ *f,\ int\ c)
+\f[]
+.fi
+.SH DESCRIPTION
+.PP
+Write a single byte to the given file.
+.PP
+Parameters:
+.IP \[bu] 2
+c - byte value to write
+.IP \[bu] 2
+f - file to write to
+.PP
+Returns c on success, or EOF on error.

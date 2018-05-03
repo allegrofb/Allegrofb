@@ -1,0 +1,19 @@
+.TH al_set_voice_playing 3 "" "Allegro reference manual"
+.SH NAME
+.PP
+al_set_voice_playing
+.SH SYNOPSIS
+.IP
+.nf
+\f[C]
+#include\ <allegro5/allegro_audio.h>
+
+bool\ al_set_voice_playing(ALLEGRO_VOICE\ *voice,\ bool\ val)
+\f[]
+.fi
+.SH DESCRIPTION
+.PP
+Change whether a voice is playing or not.
+The voice must have a sample or mixer attached to it.
+.PP
+Returns true on success, false on failure.

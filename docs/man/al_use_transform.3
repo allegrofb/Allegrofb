@@ -1,0 +1,31 @@
+.TH al_use_transform 3 "" "Allegro reference manual"
+.SH NAME
+.PP
+al_use_transform
+.SH SYNOPSIS
+.IP
+.nf
+\f[C]
+#include\ <allegro5/allegro.h>
+
+void\ al_use_transform(const\ ALLEGRO_TRANSFORM\ *trans)
+\f[]
+.fi
+.SH DESCRIPTION
+.PP
+Sets the transformation to be used for the the drawing operations
+on the target bitmap (each bitmap maintains its own
+transformation).
+Every drawing operation after this call will be transformed using
+this transformation.
+Call this function with an identity transformation to return to the
+default behaviour.
+.PP
+This function does nothing if there is no target bitmap.
+.PP
+\f[I]Parameters:\f[]
+.IP \[bu] 2
+trans - Transformation to use
+.SH SEE ALSO
+.PP
+al_get_current_transform(3), al_transform_coordinates(3)
